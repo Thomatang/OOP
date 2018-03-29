@@ -6,7 +6,7 @@ class User{
        public $email;
        public $password;
        public $connected = 0; // when connected = 0, logged out, when =1, logged in
-       private $dtb;
+       public $dtb;
 
 
     //construct function
@@ -18,18 +18,18 @@ class User{
 
     //add user function
         public function addUser(){
-            global $database;
-            $this->dtb = $database;
+            global $dbconnect;
+            $this->dtb = $dbconnect;
             $sqlRequest = "INSERT INTO users SET
-            username = :username
-            password = :password
+            username = :username,
+            password = :password,
             email = :email";
         //prepare sqql request
-            $addUser = $database->connect->prepare($sqlRequest);
+            $addUser = $dbconnect->connectDB->prepare($sqlRequest);
         //bind parameters
-            $addUser->bindParam($username,$this->username,PDO::PARAM_STR);
-            $addUser->bindParam($password,$this->password,PDO::PARAM_STR);
-            $addUser->bindParam($email,$this->email,PDO::PARAM_STR);
+            $addUser->bindParam(':username',$this->username,PDO::PARAM_STR);
+            $addUser->bindParam(':password',$this->password,PDO::PARAM_STR);
+            $addUser->bindParam(':email',$this->email,PDO::PARAM_STR);
 
         //execute
             $addUser->execute();
@@ -50,34 +50,36 @@ class User{
         public function updateUsername($newUsername){
             $this->username = $newUsername;
             $sqlRequestUpdateName = "UPDATE users SET
-            username = :updateName
+            username = :updatename;
             WHERE id= :id";
-            $updateUsername = $this->ddb->connect->prepare($sqlRequestUpdateName);
+            $updateUsername = $this->dtb->connectDB->prepare($sqlRequestUpdateName);
 
-            $updateUsername->bindParam(':updateName,$newUsername,PDO::PARAM_STR');
-            $updateUsername->bindParam(':id,$this->id, PDO::PARAM_STR');
+            $updateUsername->bindParam(':updatename',$newUsername,PDO::PARAM_STR);
+            $updateUsername->bindParam(':id',$this->id, PDO::PARAM_STR);
 
-            $sqlRequestUpdateName->execute();
+            $updateUsername->execute();
         }
 
     //update email
-        public function updateEmail($newEmail){
+        public function updateEmail($newEmail, $id){
+            $this->id = $id;
             $this->email = $newEmail;
             $sqlRequestUpdateEmail = "UPDATE users SET
-            email = :email
+            email = :updateEmail
             WHERE id= :id";
-            $updateEmail = $this->ddb->connect->prepare($sqlRequestUpdateEmail);
+            $updateUserEmail = $this->dtb->connectDB->prepare($sqlRequestUpdateEmail);
 
-            $updateUserEmail->bindParam(':email,$newEmail,PDO::PARAM_STR');
-            $updateUserEmail->bindParam(':id,$this->id, PDO::PARAM_STR');
+            $updateUserEmail->bindParam(':updateEmail',$newEmail,PDO::PARAM_STR);
+            $updateUserEmail->bindParam(':id',$this->id, PDO::PARAM_STR);
 
-            $sqlRequestUpdateEmail->execute();
+            $updateUserEmail->execute();
         }
     //delete user from DB
-        public function deleteUser(){
+        public function deleteUser($id){
+            $this->id = $id;
             $sqlRequestDelete = "DELETE FROM users
             WHERE id= :id";
-             $deleteName = $this->ddb->connect->prepare($sqlRequestDelete);
+             $deleteName = $this->dtb->connectDB->prepare($sqlRequestDelete);
              $deleteName->bindParam(':id', $this->id, PDO::PARAM_INT);
              $deleteName->execute();
         }

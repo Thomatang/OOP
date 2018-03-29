@@ -8,7 +8,27 @@
     $dbconnect= new Database('localhost','OOP','root','popo8989');
 
     $toto = new User('thomas','haha', 'toto@gmail.com');
+    $toto->addUser();
     var_dump($toto);
+    echo '<br>';
+    echo '<br>';
+    $toto->loginUser('haha');
+    var_dump($toto);
+    echo '<br>';
+    echo '<br>';
+    $toto->logoutUser();
+    var_dump($toto);
+    echo '<br>';
+    echo '<br>';
+    $toto->updateUsername('toto1992');
+    var_dump($toto);
+    echo '<br>';
+    echo '<br>';
+    $toto->updateEmail('toto1992@gmail.com',5);
+    var_dump($toto);
+    $toto->deleteUser(6);
+    var_dump($toto);
+
 
 ?>
 
